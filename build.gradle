@@ -13,10 +13,10 @@ targetCompatibility = JavaVersion.VERSION_17
 
 String getGitVersion(Project project) {
 	if (grgit != null) {
+		var dirty = grgit.status().clean ? "" : "-dirty"
 		if (grgit.describe(tags: true) == "${project.mod_version}+${project.minecraft_version}") {
-			return "${project.mod_version}+${project.minecraft_version}"
+			return "${project.mod_version}+${project.minecraft_version}${dirty}"
 		} else {
-			var dirty = grgit.status().clean ? "" : "-dirty"
 			return "${project.mod_version}-dev.${grgit.head().abbreviatedId}+${project.minecraft_version}${dirty}"
 		}
 	} else {
@@ -72,6 +72,10 @@ sourceSets {
 			exclude "link/infra/borderlessmining/util"
 		}
 	}
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/borderlessmining.accesswidener")
 }
 
 processResources {
@@ -135,7 +139,7 @@ if (System.getenv("GITHUB_TOKEN")) {
 		repo = project.github_repo_name
 		tagName = project.version
 		releaseName = "Release ${project.version}"
-		targetCommitish = "1.18"
+		targetCommitish = "1.19"
 		draft = false
 		body = getChangelog(null)
 		token System.getenv("GITHUB_TOKEN")
@@ -148,8 +152,8 @@ if (System.getenv("GITHUB_TOKEN")) {
 
 import com.modrinth.minotaur.TaskModrinthUpload
 // TODO: infer from fabric.mod.json?!
-def supportedVersions = ["1.18"]
-def versionSupportName = "(Fabric 1.18.x)"
+def supportedVersions = ["1.19.3"]
+def versionSupportName = "(Fabric/Quilt 1.19.3)"
 
 task publishModrinth(type: TaskModrinthUpload) {
 	dependsOn remapJar
@@ -165,6 +169,7 @@ task publishModrinth(type: TaskModrinthUpload) {
 		addGameVersion(version)
 	}
 	addLoader("fabric")
+	addLoader("quilt")
 	detectLoaders = false
 	versionName = project.mod_version + " " + versionSupportName
 	changelog = getChangelog(project.github_url)
@@ -186,6 +191,7 @@ if (System.getenv("CURSEFORGE_TOKEN")) {
 				addGameVersion(version)
 			}
 			addGameVersion("Fabric")
+			addGameVersion("Quilt")
 			changelog = getChangelog(project.github_url)
 			changelogType = "markdown"
 		}
