@@ -1,9 +1,9 @@
 plugins {
-	id 'fabric-loom' version '1.0-SNAPSHOT'
+	id 'fabric-loom' version '1.1-SNAPSHOT'
 	id 'maven-publish'
 
-	id "com.github.breadmoirai.github-release" version "2.2.12"
-	id "org.ajoberstar.grgit" version "4.1.0"
+	id "com.github.breadmoirai.github-release" version "2.4.1"
+	id "org.ajoberstar.grgit" version "4.1.1"
 	id "com.modrinth.minotaur" version "1.2.1"
 	id "com.matthewprenger.cursegradle" version "1.4.0"
 }
@@ -152,8 +152,8 @@ if (System.getenv("GITHUB_TOKEN")) {
 
 import com.modrinth.minotaur.TaskModrinthUpload
 // TODO: infer from fabric.mod.json?!
-def supportedVersions = ["1.19.3"]
-def versionSupportName = "(Fabric/Quilt 1.19.3)"
+def supportedVersions = ["1.19.4"]
+def versionSupportName = "(Fabric/Quilt 1.19.4)"
 
 task publishModrinth(type: TaskModrinthUpload) {
 	dependsOn remapJar
